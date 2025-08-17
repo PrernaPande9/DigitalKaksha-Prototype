@@ -1,0 +1,1785 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Integrated College Management System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+        }
+
+        /* Main Prototype Styles */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .header {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .user-selector {
+            display: flex;
+            gap: 10px;
+        }
+
+        .role-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .role-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .role-btn:not(.active) {
+            background: #f0f0f0;
+            color: #666;
+        }
+
+        .role-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .sidebar {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .main-content {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .menu-item {
+            padding: 15px;
+            margin: 5px 0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-left: 4px solid transparent;
+        }
+
+        .menu-item:hover {
+            background: #f8f9ff;
+            border-left-color: #667eea;
+        }
+
+        .menu-item.active {
+            background: #667eea;
+            color: white;
+            border-left-color: #4c63d2;
+        }
+
+        .feature-section {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .feature-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .card {
+            background: #f8f9ff;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+            border-left: 4px solid #667eea;
+        }
+
+        .notification-card {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            color: white;
+            border: none;
+            cursor: pointer;
+            position: relative;
+        }
+
+        .notification-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        }
+
+        .app-selector {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .app-btn {
+            padding: 5px 10px;
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 15px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .app-btn:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .success-card {
+            background: linear-gradient(135deg, #00d2d3 0%, #54a0ff 100%);
+            color: white;
+            border: none;
+        }
+
+        .warning-card {
+            background: linear-gradient(135deg, #feca57 0%, #ff9ff3 100%);
+            color: white;
+            border: none;
+        }
+
+        .btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            font-weight: 500;
+            margin: 5px;
+            transition: all 0.3s ease;
+        }
+
+        .btn:hover {
+            background: #5a6fd8;
+            transform: translateY(-2px);
+        }
+
+        .btn-success { background: #00d2d3; }
+        .btn-warning { background: #feca57; color: #333; }
+        .btn-danger { background: #ff6b6b; }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        .assignment-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            margin: 10px 0;
+            border: 1px solid #e0e0e0;
+        }
+
+        .assignment-status {
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+
+        .status-pending { background: #fff3cd; color: #856404; }
+        .status-submitted { background: #d1edff; color: #004085; }
+        .status-overdue { background: #f8d7da; color: #721c24; }
+
+        .integration-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: #f0f0f0;
+            border-radius: 8px;
+            margin: 10px 0;
+        }
+
+        .status-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+        }
+
+        .connected { background: #00d2d3; }
+        .disconnected { background: #ff6b6b; }
+
+        .behavior-chart {
+            background: #f8f9ff;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 10px 0;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
+            transition: width 0.3s ease;
+        }
+
+        /* WhatsApp Styles */
+        .whatsapp-container {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #000;
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .whatsapp-container.active {
+            display: flex;
+        }
+
+        .phone-container {
+            width: 375px;
+            height: 812px;
+            background: #fff;
+            border-radius: 40px;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .status-bar {
+            background: #fff;
+            height: 44px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            font-size: 17px;
+            font-weight: 600;
+        }
+
+        .wa-header {
+            background: #075E54;
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .wa-header h1 {
+            font-size: 20px;
+            font-weight: 500;
+        }
+
+        .search-bar {
+            background: #f0f0f0;
+            margin: 10px 15px;
+            padding: 10px 15px;
+            border-radius: 20px;
+            color: #666;
+            font-size: 16px;
+        }
+
+        .chat-list {
+            height: 500px;
+            overflow-y: auto;
+        }
+
+        .chat-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .chat-item:hover {
+            background: #f5f5f5;
+        }
+
+        .chat-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 18px;
+            margin-right: 15px;
+            flex-shrink: 0;
+        }
+
+        .chat-content {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .chat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+
+        .chat-name {
+            font-weight: 500;
+            font-size: 16px;
+        }
+
+        .chat-time {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .chat-preview {
+            color: #666;
+            font-size: 14px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .unread-count {
+            background: #25D366;
+            color: white;
+            border-radius: 50%;
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        /* Gmail Styles */
+        .gmail-container {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: #f3f4f6;
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .gmail-container.active {
+            display: flex;
+        }
+
+        .gmail-phone {
+            max-width: 28rem;
+            height: 812px;
+            display: flex;
+            flex-direction: column;
+            background-color: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        }
+
+        .gmail-header {
+            background: white;
+            color: black;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .gmail-search {
+            flex: 1;
+            background: #f3f4f6;
+            border-radius: 8px;
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .gmail-search input {
+            background: transparent;
+            border: none;
+            outline: none;
+            flex: 1;
+            color: black;
+        }
+
+        .gmail-search input::placeholder {
+            color: #6b7280;
+        }
+
+        .email-list {
+            flex: 1;
+            overflow-y: auto;
+            background: white;
+        }
+
+        .email-item {
+            display: flex;
+            align-items: start;
+            gap: 12px;
+            padding: 16px;
+            border-bottom: 1px solid #f3f4f6;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .email-item:hover {
+            background-color: #f9fafb;
+        }
+
+        .email-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 500;
+            font-size: 16px;
+            flex-shrink: 0;
+        }
+
+        .back-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: rgba(255,255,255,0.9);
+            border: none;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            font-size: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            z-index: 1001;
+        }
+
+        .back-btn:hover {
+            background: white;
+        }
+
+        .form-group {
+            margin: 15px 0;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+            color: #333;
+        }
+
+        .form-group input, .form-group select, .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .role-menu {
+            display: none;
+        }
+
+        .role-menu.active {
+            display: block;
+        }
+
+        .file-upload {
+            border: 2px dashed #667eea;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .file-upload:hover {
+            background: #f8f9ff;
+        }
+
+        .file-upload.dragover {
+            background: #667eea;
+            color: white;
+        }
+
+        .submission-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            margin: 10px 0;
+            border: 1px solid #e0e0e0;
+        }
+    </style>
+</head>
+<body>
+    <!-- Main Prototype -->
+    <div id="mainPrototype" class="container">
+        <div class="header">
+            <div class="logo">🎓 College Management System</div>
+            <div class="user-selector">
+                <button class="role-btn active" onclick="switchRole('student')">Student</button>
+                <button class="role-btn" onclick="switchRole('teacher')">Teacher</button>
+                <button class="role-btn" onclick="switchRole('principal')">Principal</button>
+                <button class="role-btn" onclick="switchRole('hod')">HOD</button>
+            </div>
+        </div>
+
+        <div class="dashboard">
+            <div class="sidebar">
+                <div id="student-menu" class="role-menu active">
+                    <div class="menu-item active" onclick="showFeature('assignments')">📝 My Assignments</div>
+                    <div class="menu-item" onclick="showFeature('submit-assignment')">📤 Submit Assignment</div>
+                    <div class="menu-item" onclick="showFeature('notifications')">🔔 Notifications</div>
+                    <div class="menu-item" onclick="showFeature('submissions')">📋 My Submissions</div>
+                </div>
+
+                <div id="teacher-menu" class="role-menu">
+                    <div class="menu-item active" onclick="showFeature('create-assignment')">➕ Create Assignment</div>
+                    <div class="menu-item" onclick="showFeature('manage-assignments')">📋 Manage Assignments</div>
+                    <div class="menu-item" onclick="showFeature('view-submissions')">📥 View Submissions</div>
+                    <div class="menu-item" onclick="showFeature('student-progress')">📊 Student Progress</div>
+                    <div class="menu-item" onclick="showFeature('notifications')">🔔 Notifications</div>
+                </div>
+
+                <div id="principal-menu" class="role-menu">
+                    <div class="menu-item active" onclick="showFeature('analytics')">📈 Analytics Dashboard</div>
+                    <div class="menu-item" onclick="showFeature('assign-tasks')">📋 Assign Tasks</div>
+                    <div class="menu-item" onclick="showFeature('behavior-analysis')">🎯 Behavior Analysis</div>
+                    <div class="menu-item" onclick="showFeature('manage-faculty')">👥 Manage Faculty</div>
+                    <div class="menu-item" onclick="showFeature('reports')">📊 Reports</div>
+                </div>
+
+                <div id="hod-menu" class="role-menu">
+                    <div class="menu-item active" onclick="showFeature('department-overview')">🏢 Department Overview</div>
+                    <div class="menu-item" onclick="showFeature('faculty-performance')">👨‍🏫 Faculty Performance</div>
+                    <div class="menu-item" onclick="showFeature('course-management')">📖 Course Management</div>
+                    <div class="menu-item" onclick="showFeature('assign-tasks')">📋 Assign Tasks</div>
+                </div>
+
+                <div style="margin-top: 30px; padding: 15px; background: #f0f0f0; border-radius: 10px;">
+                    <h4 style="margin-bottom: 10px;">API Integrations</h4>
+                    <div class="integration-status">
+                        <div class="status-dot connected"></div>
+                        <span>WhatsApp API</span>
+                    </div>
+                    <div class="integration-status">
+                        <div class="status-dot connected"></div>
+                        <span>Gmail API</span>
+                    </div>
+                    <div class="integration-status">
+                        <div class="status-dot connected"></div>
+                        <span>File Upload System</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="main-content">
+                <!-- Student Features -->
+                <div id="assignments" class="feature-section active">
+                    <h2>📝 My Assignments</h2>
+                    <div class="assignment-item">
+                        <div>
+                            <h4>Data Structures Assignment</h4>
+                            <p>Due: Tomorrow, 11:59 PM</p>
+                            <small>Created by: Dr. Smith</small>
+                        </div>
+                        <div>
+                            <span class="assignment-status status-pending">Pending</span>
+                            <button class="btn btn-warning" onclick="showFeature('submit-assignment')">Submit</button>
+                        </div>
+                    </div>
+                    <div class="assignment-item">
+                        <div>
+                            <h4>Database Project</h4>
+                            <p>Due: Next Week</p>
+                            <small>Created by: Prof. Johnson</small>
+                        </div>
+                        <div>
+                            <span class="assignment-status status-submitted">Submitted</span>
+                            <button class="btn btn-success">View</button>
+                        </div>
+                    </div>
+                    <div class="assignment-item">
+                        <div>
+                            <h4>Web Development Lab</h4>
+                            <p>Due: Yesterday</p>
+                            <small>Created by: Dr. Wilson</small>
+                        </div>
+                        <div>
+                            <span class="assignment-status status-overdue">Overdue</span>
+                            <button class="btn btn-danger" onclick="showFeature('submit-assignment')">Submit Late</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="submit-assignment" class="feature-section">
+                    <h2>📤 Submit Assignment</h2>
+                    <div class="card">
+                        <div class="form-group">
+                            <label>Select Assignment</label>
+                            <select>
+                                <option>Data Structures Assignment</option>
+                                <option>Web Development Lab</option>
+                                <option>Algorithm Analysis Project</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Assignment Title</label>
+                            <input type="text" placeholder="Enter submission title" value="Data Structures - Binary Tree Implementation">
+                        </div>
+                        <div class="form-group">
+                            <label>Description</label>
+                            <textarea placeholder="Add notes or description about your submission"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Upload Files</label>
+                            <div class="file-upload" onclick="triggerFileUpload()">
+                                <p>📁 Click to browse or drag & drop files</p>
+                                <p><small>Supported: PDF, DOC, DOCX, ZIP, JPG, PNG (Max: 10MB)</small></p>
+                            </div>
+                            <input type="file" id="fileInput" style="display: none;" multiple accept=".pdf,.doc,.docx,.zip,.jpg,.png">
+                            <div id="fileList" style="margin-top: 10px;"></div>
+                        </div>
+                        <button class="btn">Submit Assignment</button>
+                        <button class="btn btn-warning">Save as Draft</button>
+                    </div>
+                </div>
+
+                <div id="notifications" class="feature-section">
+                    <h2>🔔 Notifications</h2>
+                    <div class="card notification-card" onclick="showNotificationOptions(this)">
+                        <div class="app-selector">
+                            <div class="app-btn" onclick="event.stopPropagation(); openWhatsApp()">WhatsApp</div>
+                            <div class="app-btn" onclick="event.stopPropagation(); openGmail()">Gmail</div>
+                        </div>
+                        <h4>🚨 Assignment Reminder</h4>
+                        <p>Data Structures assignment is due tomorrow! Submit before 11:59 PM.</p>
+                        <small>Sent via WhatsApp & Email - 2 hours ago</small>
+                    </div>
+                    <div class="card warning-card">
+                        <h4>⚠️ Overdue Alert</h4>
+                        <p>Web Development Lab assignment is overdue. Please submit ASAP.</p>
+                        <small>Sent via WhatsApp & Email - 1 day ago</small>
+                    </div>
+                    <div class="card success-card">
+                        <h4>✅ Submission Confirmed</h4>
+                        <p>Your Database Project has been successfully submitted and received.</p>
+                        <small>Sent via Email - 3 days ago</small>
+                    </div>
+                </div>
+
+                <div id="submissions" class="feature-section">
+                    <h2>📋 My Submissions</h2>
+                    <div class="card">
+                        <h4>Submitted Assignments</h4>
+                        <div style="margin: 15px 0;">
+                            <div class="submission-item">
+                                <div>
+                                    <h4>Database Project</h4>
+                                    <p>Submitted: 3 days ago</p>
+                                    <small>Files: project.pdf, database.sql</small>
+                                </div>
+                                <div>
+                                    <span style="color: green;">✅ Graded: A-</span>
+                                    <button class="btn btn-success">View Feedback</button>
+                                </div>
+                            </div>
+                            <div class="submission-item">
+                                <div>
+                                    <h4>Algorithm Analysis</h4>
+                                    <p>Submitted: 1 day ago</p>
+                                    <small>Files: analysis.docx, code.zip</small>
+                                </div>
+                                <div>
+                                    <span style="color: orange;">⏳ Under Review</span>
+                                    <button class="btn">View Details</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Teacher Features -->
+                <div id="create-assignment" class="feature-section">
+                    <h2>➕ Create Assignment</h2>
+                    <div class="card">
+                        <div class="form-group">
+                            <label>Assignment Title</label>
+                            <input type="text" placeholder="Enter assignment title">
+                        </div>
+                        <div class="form-group">
+                            <label>Description</label>
+                            <textarea placeholder="Assignment description and requirements"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Due Date</label>
+                            <input type="datetime-local">
+                        </div>
+                        <div class="form-group">
+                            <label>Class/Course</label>
+                            <select>
+                                <option>CS301 - Data Structures</option>
+                                <option>WEB101 - Web Development</option>
+                                <option>DB201 - Database Management</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Assignment Files (Optional)</label>
+                            <div class="file-upload" onclick="triggerFileUpload('teacherFiles')">
+                                <p>📁 Upload assignment files, instructions, or resources</p>
+                                <p><small>Supported: PDF, DOC, DOCX, ZIP, JPG, PNG</small></p>
+                            </div>
+                            <input type="file" id="teacherFiles" style="display: none;" multiple>
+                        </div>
+                        <button class="btn">Create Assignment</button>
+                        <button class="btn btn-success">Create & Notify Students</button>
+                    </div>
+                </div>
+
+                <div id="view-submissions" class="feature-section">
+                    <h2>📥 Assignment Submissions</h2>
+                    <div class="card">
+                        <h4>Recent Submissions</h4>
+                        <div style="margin: 15px 0;">
+                            <div class="submission-item">
+                                <div>
+                                    <h4>John Doe - Database Project</h4>
+                                    <p>Submitted: 2 hours ago</p>
+                                    <small>Files: project.pdf, database.sql</small>
+                                </div>
+                                <div>
+                                    <button class="btn">Download</button>
+                                    <button class="btn btn-success">Grade</button>
+                                </div>
+                            </div>
+                            <div class="submission-item">
+                                <div>
+                                    <h4>Jane Smith - Algorithm Analysis</h4>
+                                    <p>Submitted: 1 day ago</p>
+                                    <small>Files: analysis.docx, code.zip</small>
+                                </div>
+                                <div>
+                                    <span style="color: green;">✅ Graded: A</span>
+                                    <button class="btn">View</button>
+                                </div>
+                            </div>
+                            <div class="submission-item">
+                                <div>
+                                    <h4>Mike Johnson - Web Development</h4>
+                                    <p>Submitted: 3 days ago</p>
+                                    <small>Files: website.zip, documentation.pdf</small>
+                                </div>
+                                <div>
+                                    <span style="color: orange;">⏳ Under Review</span>
+                                    <button class="btn btn-warning">Grade</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="analytics" class="feature-section">
+                    <h2>📈 Analytics Dashboard</h2>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-number">150</div>
+                            <div>Total Students</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">25</div>
+                            <div>Faculty Members</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">78%</div>
+                            <div>Overall Performance</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">12</div>
+                            <div>Active Assignments</div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h4>Submission Statistics</h4>
+                        <div style="margin: 15px 0;">
+                            <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee;">
+                                <span>Total Submissions Today:</span>
+                                <strong>23</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee;">
+                                <span>Pending Reviews:</span>
+                                <strong style="color: orange;">8</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee;">
+                                <span>Overdue Assignments:</span>
+                                <strong style="color: red;">5</strong>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding: 10px 0;">
+                                <span>Average Grade:</span>
+                                <strong style="color: green;">B+</strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="department-overview" class="feature-section">
+                    <h2>🏢 Department Overview</h2>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-number">45</div>
+                            <div>Department Students</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">8</div>
+                            <div>Faculty Members</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">12</div>
+                            <div>Active Courses</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">88%</div>
+                            <div>Department Performance</div>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h4>Department Submissions Overview</h4>
+                        <div style="margin: 15px 0;">
+                            <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee;">
+                                <span>CS301 - Data Structures:</span>
+                                <div>
+                                    <span style="color: green;">15 submitted</span> | 
+                                    <span style="color: orange;">3 pending</span>
+                                </div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee;">
+                                <span>WEB101 - Web Development:</span>
+                                <div>
+                                    <span style="color: green;">12 submitted</span> | 
+                                    <span style="color: red;">2 overdue</span>
+                                </div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding: 10px 0;">
+                                <span>DB201 - Database Management:</span>
+                                <div>
+                                    <span style="color: green;">18 submitted</span> | 
+                                    <span style="color: orange;">1 pending</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="manage-assignments" class="feature-section">
+                    <h2>📋 Manage Assignments</h2>
+                    <div class="card">
+                        <h4>Active Assignments</h4>
+                        <div style="margin: 15px 0;">
+                            <div class="assignment-item">
+                                <div>
+                                    <h4>Data Structures Assignment</h4>
+                                    <p>Due: Tomorrow, 11:59 PM | CS301</p>
+                                    <small>18/20 students submitted</small>
+                                </div>
+                                <div>
+                                    <button class="btn">View Submissions</button>
+                                    <button class="btn btn-warning">Edit</button>
+                                    <button class="btn btn-danger">Delete</button>
+                                </div>
+                            </div>
+                            <div class="assignment-item">
+                                <div>
+                                    <h4>Web Development Project</h4>
+                                    <p>Due: Next Week | WEB101</p>
+                                    <small>5/15 students submitted</small>
+                                </div>
+                                <div>
+                                    <button class="btn">View Submissions</button>
+                                    <button class="btn btn-warning">Edit</button>
+                                    <button class="btn btn-success">Send Reminder</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="student-progress" class="feature-section">
+                    <h2>📊 Student Progress</h2>
+                    <div class="card">
+                        <h4>Class Performance Overview</h4>
+                        <div style="margin: 15px 0;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background: white; border-radius: 8px; margin: 10px 0; border: 1px solid #e0e0e0;">
+                                <div>
+                                    <h4>John Doe</h4>
+                                    <p>Student ID: CS2023001</p>
+                                </div>
+                                <div style="text-align: right;">
+                                    <div style="color: green; font-weight: bold;">Grade: A</div>
+                                    <div style="font-size: 12px;">5/5 assignments submitted</div>
+                                </div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background: white; border-radius: 8px; margin: 10px 0; border: 1px solid #e0e0e0;">
+                                <div>
+                                    <h4>Jane Smith</h4>
+                                    <p>Student ID: CS2023002</p>
+                                </div>
+                                <div style="text-align: right;">
+                                    <div style="color: orange; font-weight: bold;">Grade: B+</div>
+                                    <div style="font-size: 12px;">4/5 assignments submitted</div>
+                                </div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background: white; border-radius: 8px; margin: 10px 0; border: 1px solid #e0e0e0;">
+                                <div>
+                                    <h4>Mike Johnson</h4>
+                                    <p>Student ID: CS2023003</p>
+                                </div>
+                                <div style="text-align: right;">
+                                    <div style="color: red; font-weight: bold;">Grade: C</div>
+                                    <div style="font-size: 12px;">3/5 assignments submitted</div>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="btn">Export Report</button>
+                        <button class="btn btn-success">Send Progress Updates</button>
+                    </div>
+                </div>
+
+                <!-- Principal Features -->
+                <div id="assign-tasks" class="feature-section">
+                    <h2>📋 Assign Tasks to Faculty</h2>
+                    <div class="card">
+                        <div class="form-group">
+                            <label>Task Title</label>
+                            <input type="text" placeholder="Enter task title">
+                        </div>
+                        <div class="form-group">
+                            <label>Description</label>
+                            <textarea placeholder="Task description and requirements"></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label>Assign To</label>
+                            <select multiple>
+                                <option>Dr. Smith (Computer Science)</option>
+                                <option>Prof. Johnson (Mathematics)</option>
+                                <option>Dr. Wilson (Physics)</option>
+                                <option>All Faculty</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Priority Level</label>
+                            <select>
+                                <option>High</option>
+                                <option>Medium</option>
+                                <option>Low</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Due Date</label>
+                            <input type="datetime-local">
+                        </div>
+                        <button class="btn">Assign Task</button>
+                        <button class="btn btn-success">Assign & Notify</button>
+                    </div>
+                    
+                    <div class="card">
+                        <h4>Active Faculty Tasks</h4>
+                        <div style="margin: 15px 0;">
+                            <div class="assignment-item">
+                                <div>
+                                    <h4>Prepare Mid-term Exam Papers</h4>
+                                    <p>Due: Next Friday | Assigned to: All Faculty</p>
+                                    <small>Priority: High</small>
+                                </div>
+                                <div>
+                                    <span class="assignment-status status-pending">In Progress</span>
+                                    <button class="btn">View Details</button>
+                                </div>
+                            </div>
+                            <div class="assignment-item">
+                                <div>
+                                    <h4>Update Course Curriculum</h4>
+                                    <p>Due: Next Month | Assigned to: HODs</p>
+                                    <small>Priority: Medium</small>
+                                </div>
+                                <div>
+                                    <span class="assignment-status status-submitted">Completed</span>
+                                    <button class="btn btn-success">Review</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="behavior-analysis" class="feature-section">
+                    <h2>🎯 Student Behavior Analysis</h2>
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-number">92%</div>
+                            <div>Overall Attendance</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">85%</div>
+                            <div>Assignment Submission Rate</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">78%</div>
+                            <div>Performance Improvement</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-number">15</div>
+                            <div>At-Risk Students</div>
+                        </div>
+                    </div>
+                    
+                    <div class="card">
+                        <h4>Department-wise Performance</h4>
+                        <div style="margin: 15px 0;">
+                            <div style="display: flex; justify-content: space-between; padding: 15px; background: white; border-radius: 8px; margin: 10px 0; border: 1px solid #e0e0e0;">
+                                <div>
+                                    <h4>Computer Science</h4>
+                                    <p>45 Students</p>
+                                </div>
+                                <div style="text-align: right;">
+                                    <div style="color: green; font-weight: bold;">Average: 88%</div>
+                                    <div class="progress-bar" style="width: 200px;">
+                                        <div class="progress-fill" style="width: 88%;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding: 15px; background: white; border-radius: 8px; margin: 10px 0; border: 1px solid #e0e0e0;">
+                                <div>
+                                    <h4>Electronics</h4>
+                                    <p>38 Students</p>
+                                </div>
+                                <div style="text-align: right;">
+                                    <div style="color: orange; font-weight: bold;">Average: 75%</div>
+                                    <div class="progress-bar" style="width: 200px;">
+                                        <div class="progress-fill" style="width: 75%;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding: 15px; background: white; border-radius: 8px; margin: 10px 0; border: 1px solid #e0e0e0;">
+                                <div>
+                                    <h4>Mechanical</h4>
+                                    <p>42 Students</p>
+                                </div>
+                                <div style="text-align: right;">
+                                    <div style="color: green; font-weight: bold;">Average: 82%</div>
+                                    <div class="progress-bar" style="width: 200px;">
+                                        <div class="progress-fill" style="width: 82%;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="btn">Generate Detailed Report</button>
+                        <button class="btn btn-warning">Alert Low Performers</button>
+                    </div>
+                </div>
+
+                <div id="manage-faculty" class="feature-section">
+                    <h2>👥 Manage Faculty</h2>
+                    <div class="card">
+                        <h4>Faculty Overview</h4>
+                        <div style="margin: 15px 0;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background: white; border-radius: 8px; margin: 10px 0; border: 1px solid #e0e0e0;">
+                                <div>
+                                    <h4>Dr. Smith Johnson</h4>
+                                    <p>Computer Science | Professor</p>
+                                    <small>3 courses, 45 students</small>
+                                </div>
+                                <div style="text-align: right;">
+                                    <div style="color: green; font-weight: bold;">Performance: Excellent</div>
+                                    <div style="font-size: 12px;">95% student satisfaction</div>
+                                    <button class="btn" style="margin-top: 5px;">View Profile</button>
+                                </div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background: white; border-radius: 8px; margin: 10px 0; border: 1px solid #e0e0e0;">
+                                <div>
+                                    <h4>Prof. Sarah Wilson</h4>
+                                    <p>Electronics | Associate Professor</p>
+                                    <small>2 courses, 38 students</small>
+                                </div>
+                                <div style="text-align: right;">
+                                    <div style="color: green; font-weight: bold;">Performance: Very Good</div>
+                                    <div style="font-size: 12px;">88% student satisfaction</div>
+                                    <button class="btn" style="margin-top: 5px;">View Profile</button>
+                                </div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background: white; border-radius: 8px; margin: 10px 0; border: 1px solid #e0e0e0;">
+                                <div>
+                                    <h4>Dr. Mike Brown</h4>
+                                    <p>Mechanical | Assistant Professor</p>
+                                    <small>2 courses, 42 students</small>
+                                </div>
+                                <div style="text-align: right;">
+                                    <div style="color: orange; font-weight: bold;">Performance: Good</div>
+                                    <div style="font-size: 12px;">78% student satisfaction</div>
+                                    <button class="btn" style="margin-top: 5px;">View Profile</button>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="btn">Add New Faculty</button>
+                        <button class="btn btn-success">Send Feedback Request</button>
+                    </div>
+                </div>
+
+                <div id="reports" class="feature-section">
+                    <h2>📊 Institution Reports</h2>
+                    <div class="card">
+                        <h4>Generate Reports</h4>
+                        <div style="margin: 15px 0;">
+                            <div class="form-group">
+                                <label>Report Type</label>
+                                <select>
+                                    <option>Academic Performance Report</option>
+                                    <option>Faculty Performance Report</option>
+                                    <option>Student Behavior Analysis</option>
+                                    <option>Assignment Submission Statistics</option>
+                                    <option>Department Comparison Report</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Time Period</label>
+                                <select>
+                                    <option>Current Semester</option>
+                                    <option>Last Month</option>
+                                    <option>Last 3 Months</option>
+                                    <option>Academic Year</option>
+                                    <option>Custom Range</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Format</label>
+                                <select>
+                                    <option>PDF</option>
+                                    <option>Excel</option>
+                                    <option>PowerPoint</option>
+                                </select>
+                            </div>
+                        </div>
+                        <button class="btn">Generate Report</button>
+                        <button class="btn btn-success">Schedule Automated Reports</button>
+                    </div>
+                    
+                    <div class="card">
+                        <h4>Recent Reports</h4>
+                        <div style="margin: 15px 0;">
+                            <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee;">
+                                <span>Monthly Performance Report - August 2025</span>
+                                <button class="btn">Download</button>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #eee;">
+                                <span>Faculty Evaluation Summary</span>
+                                <button class="btn">Download</button>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; padding: 10px 0;">
+                                <span>Student Behavior Analysis - Q2 2025</span>
+                                <button class="btn">Download</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- HOD Features -->
+                <div id="faculty-performance" class="feature-section">
+                    <h2>👨‍🏫 Faculty Performance</h2>
+                    <div class="card">
+                        <h4>Department Faculty Overview</h4>
+                        <div style="margin: 15px 0;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background: white; border-radius: 8px; margin: 10px 0; border: 1px solid #e0e0e0;">
+                                <div>
+                                    <h4>Prof. Alice Johnson</h4>
+                                    <p>Data Structures & Algorithms</p>
+                                    <small>Teaching Load: 3 courses, 65 students</small>
+                                </div>
+                                <div style="text-align: right;">
+                                    <div style="color: green; font-weight: bold;">Rating: 4.8/5</div>
+                                    <div style="font-size: 12px;">24/25 assignments graded</div>
+                                    <div class="progress-bar" style="width: 150px; margin-top: 5px;">
+                                        <div class="progress-fill" style="width: 96%;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background: white; border-radius: 8px; margin: 10px 0; border: 1px solid #e0e0e0;">
+                                <div>
+                                    <h4>Dr. Robert Chen</h4>
+                                    <p>Database Management Systems</p>
+                                    <small>Teaching Load: 2 courses, 45 students</small>
+                                </div>
+                                <div style="text-align: right;">
+                                    <div style="color: green; font-weight: bold;">Rating: 4.6/5</div>
+                                    <div style="font-size: 12px;">18/20 assignments graded</div>
+                                    <div class="progress-bar" style="width: 150px; margin-top: 5px;">
+                                        <div class="progress-fill" style="width: 90%;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="display: flex; justify-content: space-between; align-items: center; padding: 15px; background: white; border-radius: 8px; margin: 10px 0; border: 1px solid #e0e0e0;">
+                                <div>
+                                    <h4>Prof. Maria Garcia</h4>
+                                    <p>Web Development</p>
+                                    <small>Teaching Load: 2 courses, 38 students</small>
+                                </div>
+                                <div style="text-align: right;">
+                                    <div style="color: orange; font-weight: bold;">Rating: 4.2/5</div>
+                                    <div style="font-size: 12px;">14/18 assignments graded</div>
+                                    <div class="progress-bar" style="width: 150px; margin-top: 5px;">
+                                        <div class="progress-fill" style="width: 78%;"></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="btn">Schedule Performance Review</button>
+                        <button class="btn btn-success">Send Appreciation</button>
+                    </div>
+                </div>
+
+                <div id="course-management" class="feature-section">
+                    <h2>📖 Course Management</h2>
+                    <div class="card">
+                        <h4>Department Courses</h4>
+                        <div style="margin: 15px 0;">
+                            <div class="assignment-item">
+                                <div>
+                                    <h4>CS301 - Data Structures & Algorithms</h4>
+                                    <p>Prof. Alice Johnson | 25 Students</p>
+                                    <small>Current Assignments: 5 Active, 12 Completed</small>
+                                </div>
+                                <div>
+                                    <span style="color: green; font-weight: bold;">Status: Active</span>
+                                    <button class="btn">View Details</button>
+                                </div>
+                            </div>
+                            <div class="assignment-item">
+                                <div>
+                                    <h4>CS401 - Database Management Systems</h4>
+                                    <p>Dr. Robert Chen | 22 Students</p>
+                                    <small>Current Assignments: 3 Active, 8 Completed</small>
+                                </div>
+                                <div>
+                                    <span style="color: green; font-weight: bold;">Status: Active</span>
+                                    <button class="btn">View Details</button>
+                                </div>
+                            </div>
+                            <div class="assignment-item">
+                                <div>
+                                    <h4>CS201 - Web Development</h4>
+                                    <p>Prof. Maria Garcia | 20 Students</p>
+                                    <small>Current Assignments: 2 Active, 15 Completed</small>
+                                </div>
+                                <div>
+                                    <span style="color: orange; font-weight: bold;">Status: Needs Review</span>
+                                    <button class="btn btn-warning">Review</button>
+                                </div>
+                            </div>
+                        </div>
+                        <button class="btn">Add New Course</button>
+                        <button class="btn btn-success">Update Curriculum</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- WhatsApp Prototype -->
+    <div id="whatsappContainer" class="whatsapp-container">
+        <button class="back-btn" onclick="closeWhatsApp()">×</button>
+        <div class="phone-container">
+            <div class="status-bar">
+                <span>5:47</span>
+                <span>📶 WiFi 🔋55%</span>
+            </div>
+            
+            <div class="wa-header">
+                <h1>WhatsApp</h1>
+                <div>📷 ⋮</div>
+            </div>
+            
+            <div class="search-bar">
+                🔍 Ask Meta AI or Search
+            </div>
+            
+            <div class="chat-list">
+                <div class="chat-item">
+                    <div class="chat-avatar" style="background: #4285f4;">A</div>
+                    <div class="chat-content">
+                        <div class="chat-header">
+                            <span class="chat-name">Academic Reminder</span>
+                            <span class="chat-time">now</span>
+                        </div>
+                        <div class="chat-preview">DBMS CA-1 Submission before 20/08/25</div>
+                    </div>
+                    <div class="unread-count">1</div>
+                </div>
+                
+                <div class="chat-item">
+                    <div class="chat-avatar" style="background: #ea4335;">P</div>
+                    <div class="chat-content">
+                        <div class="chat-header">
+                            <span class="chat-name">Prerna</span>
+                            <span class="chat-time">5:25 pm</span>
+                        </div>
+                        <div class="chat-preview">📎 Assignment_Solution.zip</div>
+                    </div>
+                </div>
+                
+                <div class="chat-item">
+                    <div class="chat-avatar" style="background: #9c27b0;">B</div>
+                    <div class="chat-content">
+                        <div class="chat-header">
+                            <span class="chat-name">BIT Computer Science</span>
+                            <span class="chat-time">4:30 pm</span>
+                        </div>
+                        <div class="chat-preview">Teacher: Assignment due tomorrow!</div>
+                    </div>
+                </div>
+                
+                <div class="chat-item">
+                    <div class="chat-avatar" style="background: #ff9800;">C</div>
+                    <div class="chat-content">
+                        <div class="chat-header">
+                            <span class="chat-name">Computer A Section</span>
+                            <span class="chat-time">2:42 pm</span>
+                        </div>
+                        <div class="chat-preview">Student: Submitted my assignment via college portal</div>
+                    </div>
+                </div>
+                
+                <div class="chat-item">
+                    <div class="chat-avatar" style="background: #ff5722;">C</div>
+                    <div class="chat-content">
+                        <div class="chat-header">
+                            <span class="chat-name">CS Department Updates</span>
+                            <span class="chat-time">2:42 pm</span>
+                        </div>
+                        <div class="chat-preview">New assignment portal is now live! Submit directly...</div>
+                    </div>
+                </div>
+                
+                <div class="chat-item">
+                    <div class="chat-avatar" style="background: #00bcd4;">T</div>
+                    <div class="chat-content">
+                        <div class="chat-header">
+                            <span class="chat-name">Teachers Group</span>
+                            <span class="chat-time">1:15 pm</span>
+                        </div>
+                        <div class="chat-preview">All submissions are now tracked in the portal...</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Gmail Prototype -->
+    <div id="gmailContainer" class="gmail-container">
+        <button class="back-btn" onclick="closeGmail()">×</button>
+        <div class="gmail-phone">
+            <div class="status-bar">
+                <span>8:02</span>
+                <span>📶 WiFi 🔋51%</span>
+            </div>
+
+            <div class="gmail-header">
+                <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                </svg>
+                
+                <div class="gmail-search">
+                    <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+                    </svg>
+                    <input type="text" placeholder="Search in emails">
+                </div>
+                
+                <div class="email-avatar bg-blue-600" style="width: 2rem; height: 2rem; font-size: 0.875rem;">
+                    V
+                </div>
+            </div>
+
+            <div style="padding: 12px 16px; background: white;">
+                <h2 style="color: black; font-weight: 500;">Inbox</h2>
+            </div>
+
+            <div class="email-list">
+                <div class="email-item">
+                    <div class="email-avatar bg-blue-600">📚</div>
+                    <div style="flex: 1; min-width: 0;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
+                            <h3 style="font-weight: 500; color: #2563eb; font-size: 14px;">Assignment Submission Confirmed</h3>
+                            <span style="font-size: 12px; color: #6b7280;">now</span>
+                        </div>
+                        <p style="color: black; font-size: 14px; margin-bottom: 4px;">Your assignment has been received</p>
+                        <p style="color: #6b7280; font-size: 14px;">Thank you for submitting your Data Structures assignment...</p>
+                    </div>
+                </div>
+                
+                <div class="email-item">
+                    <div class="email-avatar bg-teal-500">G</div>
+                    <div style="flex: 1; min-width: 0;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
+                            <h3 style="font-weight: 500; color: black; font-size: 14px;">Prof. Gajanan Tikhe</h3>
+                            <span style="font-size: 12px; color: #6b7280;">3:06 pm</span>
+                        </div>
+                        <p style="color: black; font-size: 14px; margin-bottom: 4px;">Assignment Graded - Database Project</p>
+                        <p style="color: #6b7280; font-size: 14px;">Your assignment has been graded. Grade: A- ...</p>
+                        <div style="margin-top: 8px;">
+                            <span style="background: #dcfce7; color: #16a34a; font-size: 12px; padding: 2px 8px; border-radius: 4px;">
+                                Grade: A-
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="email-item">
+                    <div class="email-avatar bg-orange-500">S</div>
+                    <div style="flex: 1; min-width: 0;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
+                            <h3 style="font-weight: 500; color: black; font-size: 14px;">College Portal System</h3>
+                            <span style="font-size: 12px; color: #6b7280;">11:22 am</span>
+                        </div>
+                        <p style="color: black; font-size: 14px; margin-bottom: 4px;">New Assignment Posted</p>
+                        <p style="color: #6b7280; font-size: 14px;">A new assignment has been posted in Web Development...</p>
+                    </div>
+                </div>
+                
+                <div class="email-item">
+                    <div class="email-avatar bg-red-500">R</div>
+                    <div style="flex: 1; min-width: 0;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
+                            <h3 style="font-weight: 500; color: black; font-size: 14px;">Assignment Reminder</h3>
+                            <span style="font-size: 12px; color: #6b7280;">11:21 am</span>
+                        </div>
+                        <p style="color: black; font-size: 14px; margin-bottom: 4px;">Overdue Assignment Alert</p>
+                        <p style="color: #6b7280; font-size: 14px;">Your Web Development Lab assignment is overdue...</p>
+                    </div>
+                </div>
+                
+                <div class="email-item">
+                    <div class="email-avatar bg-green-600">T</div>
+                    <div style="flex: 1; min-width: 0;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
+                            <h3 style="font-weight: 500; color: black; font-size: 14px;">Dr. Sarah Wilson</h3>
+                            <span style="font-size: 12px; color: #6b7280;">11:18 am</span>
+                        </div>
+                        <p style="color: black; font-size: 14px; margin-bottom: 4px;">Assignment Feedback Available</p>
+                        <p style="color: #6b7280; font-size: 14px;">Detailed feedback for your algorithm analysis...</p>
+                    </div>
+                </div>
+                
+                <div class="email-item">
+                    <div class="email-avatar bg-blue-500">P</div>
+                    <div style="flex: 1; min-width: 0;">
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px;">
+                            <h3 style="font-weight: 500; color: black; font-size: 14px;">College Portal</h3>
+                            <span style="font-size: 12px; color: #6b7280;">8 Aug</span>
+                        </div>
+                        <p style="color: black; font-size: 14px; margin-bottom: 4px;">Weekly Submission Report</p>
+                        <p style="color: #6b7280; font-size: 14px;">Here's your weekly assignment submission summary...</p>
+                    </div>
+                </div>
+            </div>
+
+            <div style="background: white; border-top: 1px solid #e5e7eb; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between;">
+                <div style="display: flex; align-items: center; gap: 24px;">
+                    <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26c.67.36 1.45.36 2.12 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                    </svg>
+                    <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197m13.5-9a2.5 2.5 0 11-5 0 2.5 2.5 0 015 0z"/>
+                    </svg>
+                    <svg class="w-6 h-6 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                    </svg>
+                </div>
+                
+                <div style="position: relative;">
+                    <div style="background: linear-gradient(135deg, #ea580c 0%, #dc2626 100%); border-radius: 50%; padding: 16px; box-shadow: 0 4px 12px rgba(234, 88, 12, 0.3);">
+                        <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"/>
+                        </svg>
+                    </div>
+                    <div style="position: absolute; top: -4px; left: -4px; background: #ef4444; color: white; border-radius: 50%; width: 24px; height: 24px; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600;">
+                        5
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentRole = 'student';
+        let currentFeature = 'assignments';
+
+        function switchRole(role) {
+            // Update active role button
+            document.querySelectorAll('.role-btn').forEach(btn => btn.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Hide all role menus
+            document.querySelectorAll('.role-menu').forEach(menu => menu.classList.remove('active'));
+            
+            // Show selected role menu
+            document.getElementById(role + '-menu').classList.add('active');
+            
+            // Update menu items
+            document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('active'));
+            document.querySelector(`#${role}-menu .menu-item`).classList.add('active');
+            
+            currentRole = role;
+            
+            // Show default feature for role
+            const defaultFeatures = {
+                'student': 'assignments',
+                'teacher': 'create-assignment',
+                'principal': 'analytics',
+                'hod': 'department-overview'
+            };
+            
+            showFeature(defaultFeatures[role]);
+        }
+
+        function showFeature(featureId) {
+            // Update active menu item
+            document.querySelectorAll('.menu-item').forEach(item => item.classList.remove('active'));
+            if (event && event.target) {
+                event.target.classList.add('active');
+            }
+            
+            // Hide all feature sections
+            document.querySelectorAll('.feature-section').forEach(section => section.classList.remove('active'));
+            
+            // Show selected feature
+            const featureElement = document.getElementById(featureId);
+            if (featureElement) {
+                featureElement.classList.add('active');
+            }
+            currentFeature = featureId;
+        }
+
+        function showNotificationOptions(element) {
+            // Toggle visibility of app selector buttons
+            const appSelector = element.querySelector('.app-selector');
+            if (appSelector.style.opacity === '1') {
+                appSelector.style.opacity = '0';
+                appSelector.style.pointerEvents = 'none';
+            } else {
+                appSelector.style.opacity = '1';
+                appSelector.style.pointerEvents = 'auto';
+            }
+        }
+
+        function openWhatsApp() {
+            document.getElementById('mainPrototype').style.display = 'none';
+            document.getElementById('whatsappContainer').classList.add('active');
+        }
+
+        function closeWhatsApp() {
+            document.getElementById('whatsappContainer').classList.remove('active');
+            document.getElementById('mainPrototype').style.display = 'block';
+        }
+
+        function openGmail() {
+            document.getElementById('mainPrototype').style.display = 'none';
+            document.getElementById('gmailContainer').classList.add('active');
+        }
+
+        function closeGmail() {
+            document.getElementById('gmailContainer').classList.remove('active');
+            document.getElementById('mainPrototype').style.display = 'block';
+        }
+
+        function triggerFileUpload(inputId = 'fileInput') {
+            document.getElementById(inputId).click();
+        }
+
+        // File upload functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const fileInput = document.getElementById('fileInput');
+            const fileList = document.getElementById('fileList');
+            const fileUploadArea = document.querySelector('.file-upload');
+
+            // File input change handler
+            fileInput.addEventListener('change', function(e) {
+                displayFiles(e.target.files);
+            });
+
+            // Drag and drop functionality
+            fileUploadArea.addEventListener('dragover', function(e) {
+                e.preventDefault();
+                fileUploadArea.classList.add('dragover');
+            });
+
+            fileUploadArea.addEventListener('dragleave', function(e) {
+                e.preventDefault();
+                fileUploadArea.classList.remove('dragover');
+            });
+
+            fileUploadArea.addEventListener('drop', function(e) {
+                e.preventDefault();
+                fileUploadArea.classList.remove('dragover');
+                const files = e.dataTransfer.files;
+                displayFiles(files);
+            });
+
+            function displayFiles(files) {
+                fileList.innerHTML = '';
+                Array.from(files).forEach((file, index) => {
+                    const fileItem = document.createElement('div');
+                    fileItem.style.cssText = 'display: flex; justify-content: space-between; align-items: center; padding: 10px; background: white; border-radius: 5px; margin: 5px 0; border: 1px solid #ddd;';
+                    fileItem.innerHTML = `
+                        <div>
+                            <strong>${file.name}</strong>
+                            <small style="color: #666; margin-left: 10px;">(${(file.size / 1024).toFixed(1)} KB)</small>
+                        </div>
+                        <button class="btn btn-danger" style="padding: 5px 10px; font-size: 12px;" onclick="removeFile(${index})">Remove</button>
+                    `;
+                    fileList.appendChild(fileItem);
+                });
+            }
+
+            // Initialize app selector opacity
+            const appSelectors = document.querySelectorAll('.app-selector');
+            appSelectors.forEach(selector => {
+                selector.style.opacity = '0';
+                selector.style.pointerEvents = 'none';
+                selector.style.transition = 'opacity 0.3s ease';
+            });
+        });
+
+        function removeFile(index) {
+            // This would remove the file from the files array in a real implementation
+            const fileList = document.getElementById('fileList');
+            fileList.children[index].remove();
+        }
+
+        // Demo notifications simulation
+        function simulateNotifications() {
+            const notifications = [
+                "📧 Assignment submission confirmed for John Doe",
+                "✅ New submission received for Database Project",
+                "⚠️ 2 students have overdue assignments - notifications sent",
+                "📊 Weekly submission report generated",
+                "👨‍🏫 Assignment grades posted and students notified",
+                "🔔 Reminder sent to 5 students about pending submissions"
+            ];
+            
+            let index = 0;
+            setInterval(() => {
+                if (document.getElementById('notifications').classList.contains('active')) {
+                    const notification = document.createElement('div');
+                    notification.className = 'card success-card';
+                    notification.innerHTML = `
+                        <h4>🔔 Live Notification</h4>
+                        <p>${notifications[index % notifications.length]}</p>
+                        <small>Just now</small>
+                    `;
+                    document.getElementById('notifications').appendChild(notification);
+                    index++;
+                    
+                    // Remove after 5 seconds
+                    setTimeout(() => {
+                        notification.remove();
+                    }, 5000);
+                }
+            }, 10000);
+        }
+
+        // Initialize demo
+        window.onload = function() {
+            simulateNotifications();
+        }
+    </script>
+</body>
+</html>
